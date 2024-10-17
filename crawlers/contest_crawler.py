@@ -1,4 +1,6 @@
 import requests
+from bs4 import BeautifulSoup
+import re
 
 from utils import DbActions
 
@@ -28,6 +30,31 @@ class ContestCrawler:
         except Exception as e:
             print(e)
 
+    def codechef(self):
+        try:
+            print("Crawling CodeChef...")
+            session = requests.Session()
+            response = session.get('https://www.codechef.com/contests')
+
+            # Extract CSRF token from the response
+            soup = BeautifulSoup(response.text, 'html.parser')
+            csrf_token_script = soup.find('script', text=re.compile('window.csrfToken'))
+            csrf_token = re.search(r'window.csrfToken = "(.*?)";', csrf_token_script.string).group(1)
+
+            session.headers.update({'X-CSRF-Token': csrf_token})
+            params = {
+                'sort_by': 'START',
+                'sorting_order': 'asc',
+                'offset': '0',
+                'mode': 'all',
+            }
+            response = session.get('https://www.codechef.com/api/list/contests/all', params=params)
+            response = response.json()['future_contests']
+            self.dbActions.insert_codechef(response)
+        except Exception as e:
+            print(e)
+    
+    
     def get_contests(self,platform_name):
         self.contests  = self.dbActions.fetch_data_by_platform(platform_name)
         return self.contests  
