@@ -181,7 +181,7 @@ class DbActions():
                         'contest_id': tpl[0],
                         'name': tpl[1],
                         'duration': tpl[2],
-                        'platform': 'codechef',
+                        'platform': 'gfg',
                         'start_date': tpl[4],
                         'image_url' : tpl[5]
                     })
