@@ -1,0 +1,13 @@
+version: 1
+services:
+  - type: web
+    name: contest-crawler
+    env: python
+    plan: free  
+    buildCommand: pip install -r requirements.txt  
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port 10000 
+    autoDeploy: true 
+    webService:
+      routes:
+        - type: http
+          path: /  
