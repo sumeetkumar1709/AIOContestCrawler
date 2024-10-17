@@ -143,3 +143,56 @@ class DbActions():
         finally:
             # No explicit close needed, but you can log or handle cleanup if necessary
             pass
+
+    def insert_gfg(self, data=[]):
+        try:
+            masterList = []
+            for row in data:
+                temp =  []
+                contest_start_date = row.get('start_time')
+                contest_end_date = row.get('end_time')
+                start_datetime = datetime.fromisoformat(contest_start_date)
+                end_datetime = datetime.fromisoformat(contest_end_date)
+                time_difference = end_datetime - start_datetime
+                difference_in_seconds = int(time_difference.total_seconds())
+                temp.append(row.get('slug'))
+                temp.append(row.get('name'))
+                temp.append(difference_in_seconds)
+                temp.append('gfg')
+                temp.append(contest_start_date)
+                temp.append(row['banner'].get('desktop_url'))
+                temp = tuple(temp)
+                masterList.append(temp)
+            
+            if len(masterList) > 0:
+                client = self.get_con()
+                if client is None:
+                    return  # Handle the case where the client could not be created
+                
+                # Delete existing records with the same platform
+                client.from_('contests').delete().match({
+                    'platform': 'gfg'
+                }).execute()
+
+                # Prepare the data for insertion
+                data_to_insert = []
+                for tpl in masterList:
+                    data_to_insert.append({
+                        'contest_id': tpl[0],
+                        'name': tpl[1],
+                        'duration': tpl[2],
+                        'platform': 'codechef',
+                        'start_date': tpl[4],
+                        'image_url' : tpl[5]
+                    })
+
+                # Log the data to be inserted for debugging
+                print(f"Inserting data: {data_to_insert}")
+
+                # Insert the data into the public.contests table
+                response = client.from_('contests').insert(data_to_insert).execute()
+        except Exception as e:
+            print(e)
+        finally:
+            # No explicit close needed, but you can log or handle cleanup if necessary
+            pass

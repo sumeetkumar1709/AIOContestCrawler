@@ -54,7 +54,33 @@ class ContestCrawler:
         except Exception as e:
             print(e)
     
-    
+    def gfg(self):
+        try:
+            print("Crawling GFG...")
+            session = requests.Session()
+            headers = {
+                'accept': '*/*',
+                'accept-language': 'en,en-US;q=0.9',
+                'cache-control': 'no-cache',
+                'origin': 'https://www.geeksforgeeks.org',
+                'pragma': 'no-cache',
+                'priority': 'u=1, i',
+                'referer': 'https://www.geeksforgeeks.org/',
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36',
+            }
+            session.headers.update(headers)
+            params = {
+                'page_number': '1',
+                'sub_type': 'all',
+                'type': 'contest',
+            }
+            response = session.get('https://practiceapi.geeksforgeeks.org/api/vr/events/', params=params)
+            response = response.json()['results']['upcoming']
+            self.dbActions.insert_gfg(response)
+        except Exception as e:
+            print(e)
+            
+            
     def get_contests(self,platform_name):
         self.contests  = self.dbActions.fetch_data_by_platform(platform_name)
         return self.contests  
