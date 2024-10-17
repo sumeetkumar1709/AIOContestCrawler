@@ -4,5 +4,8 @@
     },
     "codechef": {
         "crawlers": ["ContestCrawler"]
+    },
+    "gfg":{
+        "crawlers" : ["ContestCrawler"]
     }
 }
