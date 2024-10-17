@@ -52,7 +52,7 @@ async def get_platform_info(platform_name: str, x_api_token: str = Header(...)):
         print(f"Internal server error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@app.get("/force-run-task")
+@app.post("/force-run-task")
 async def force_run_task():
     scheduled_task()  
     return {"message": "Scheduled task executed immediately."}
