@@ -1,9 +1,11 @@
 import os
 from fastapi import FastAPI, HTTPException, Header
 from apscheduler.schedulers.background import BackgroundScheduler  # Import BackgroundScheduler
+from dotenv import load_dotenv
 
 from crawlers import ContestCrawler
 
+load_dotenv()
 app = FastAPI()
 
 import json
@@ -24,8 +26,9 @@ def scheduled_task():
         ContestCrawler(plat,'crawl')
     print("Scheduled task executed") 
 
+refresh_interval = os.getenv('REFRESH_INTERVAL')
 # Schedule the task to run every hour
-scheduler.add_job(scheduled_task, 'interval', hours = 1)
+scheduler.add_job(scheduled_task, 'interval', minutes = int(refresh_interval))
 
 def start_scheduler():
     scheduler.start()  
