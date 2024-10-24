@@ -24,6 +24,24 @@ class DbActions():
             print(e)
             return None
     
+    def fetch_contests_ordered_by_start_date(self):
+        try:
+            client = self.get_con()
+
+            # Fetch data from 'public.contests' ordered by 'start_date' in descending order
+            response = client.table('contests').select('*').order('start_date', desc=False).execute()
+
+            # Check if response is successful and return data
+            if response.data is not None:
+                return response.data
+            else:
+                print(f"Error fetching data: {response}")
+                return None
+        except Exception as e:
+            print(f"Error fetching contests: {e}")
+            return None
+    
+    
     def fetch_data_by_platform(self, platform_name):
         try:
             client = self.get_con()

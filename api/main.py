@@ -4,6 +4,7 @@ from apscheduler.schedulers.background import BackgroundScheduler  # Import Back
 from dotenv import load_dotenv
 
 from crawlers import ContestCrawler
+from utils import DbActions
 
 load_dotenv()
 app = FastAPI()
@@ -59,3 +60,17 @@ async def get_platform_info(platform_name: str, x_api_token: str = Header(...)):
 async def force_run_task():
     scheduled_task()  
     return {"message": "Scheduled task executed immediately."}
+
+
+@app.get("/contest/data")
+async def get_contest_data(x_api_token: str = Header(...)):
+    try:
+        # Check if the provided token matches the expected token
+        if x_api_token != API_TOKEN:
+            raise HTTPException(status_code=401, detail="Invalid API token")
+
+        data = DbActions().fetch_contests_ordered_by_start_date()
+        return {"data": data}
+    except Exception as e:
+        print(f"Internal server error: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
